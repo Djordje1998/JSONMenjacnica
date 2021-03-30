@@ -10,6 +10,22 @@ public class Transakcija {
 	private double konvertovaniIznos;
 	private String datumTransakcije;
 	
+	
+	
+	public Transakcija() {
+		super();
+	}
+
+	public Transakcija(String izvnornaValuta, String krajnjaValuta, double pocetniIznos, double konvertovaniIznos,
+			String datumTransakcije) {
+		super();
+		this.izvnornaValuta = izvnornaValuta;
+		this.krajnjaValuta = krajnjaValuta;
+		this.pocetniIznos = pocetniIznos;
+		this.konvertovaniIznos = konvertovaniIznos;
+		this.datumTransakcije = datumTransakcije;
+	}
+
 	public String getIzvnornaValuta() {
 		return izvnornaValuta;
 	}
