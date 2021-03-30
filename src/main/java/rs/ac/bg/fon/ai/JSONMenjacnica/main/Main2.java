@@ -5,6 +5,8 @@ import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -26,21 +28,23 @@ public class Main2 {
 	private static final String CURRENCIES3 = "CHF";
 	private static final int VALUE = 100;
 	private static final String DATUMKURSA = "2020-07-04";
+	//private static final SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+	//private static final String SADA = format.format(new Date());
 
 	private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-	private static double zamenaKursaHistorical(double pocetniIznos, String method, String endpoint, String currencies)
-			throws Exception {
+	private static double zamenaKursaHistorical(double pocetniIznos, String method, String endpoint, String currencies,
+			String datum, String source) throws Exception {
 		double konvertovano = -1;
 		try {
-			URL url = new URL(BASE_URL + "/" + endpoint + "?access_key=" + API_KEY + "&date=" + DATUMKURSA + "&source="
-					+ SOURCE + "&currencies=" + currencies);
+			URL url = new URL(BASE_URL + "/" + endpoint + "?access_key=" + API_KEY + "&date=" + datum + "&source="
+					+ source + "&currencies=" + currencies);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod(method);
 			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 			JsonObject respond = gson.fromJson(in, JsonObject.class);
 			if (respond.get("success").getAsBoolean()) {
-				double kurs = respond.get("quotes").getAsJsonObject().get(SOURCE + currencies).getAsDouble();
+				double kurs = respond.get("quotes").getAsJsonObject().get(source + currencies).getAsDouble();
 				konvertovano = kurs * pocetniIznos;
 				return konvertovano;
 			} else {
@@ -58,19 +62,27 @@ public class Main2 {
 		Transakcija t2 = new Transakcija(SOURCE, CURRENCIES2, VALUE, -1, DATUMKURSA);
 		Transakcija t3 = new Transakcija(SOURCE, CURRENCIES3, VALUE, -1, DATUMKURSA);
 
+//		Transakcija t4 = new Transakcija("BTC", "USD", 1, -1, DATUMKURSA);
+//		Transakcija t5 = new Transakcija("BTC", "USD", 1, -1, SADA);
+
 		try {
-			t1.setKonvertovaniIznos(
-					zamenaKursaHistorical(t1.getPocetniIznos(), "GET", "historical", t1.getKrajnjaValuta()));
-			t2.setKonvertovaniIznos(
-					zamenaKursaHistorical(t2.getPocetniIznos(), "GET", "historical", t2.getKrajnjaValuta()));
-			t3.setKonvertovaniIznos(
-					zamenaKursaHistorical(t3.getPocetniIznos(), "GET", "historical", t3.getKrajnjaValuta()));
+			t1.setKonvertovaniIznos(zamenaKursaHistorical(t1.getPocetniIznos(), "GET", "historical",
+					t1.getKrajnjaValuta(), t1.getDatumTransakcije(), t1.getIzvnornaValuta()));
+			t2.setKonvertovaniIznos(zamenaKursaHistorical(t2.getPocetniIznos(), "GET", "historical",
+					t2.getKrajnjaValuta(), t2.getDatumTransakcije(), t2.getIzvnornaValuta()));
+			t3.setKonvertovaniIznos(zamenaKursaHistorical(t3.getPocetniIznos(), "GET", "historical",
+					t3.getKrajnjaValuta(), t3.getDatumTransakcije(), t3.getIzvnornaValuta()));
+
+//			t4.setKonvertovaniIznos(zamenaKursaHistorical(t4.getPocetniIznos(), "GET", "historical",
+//					t4.getKrajnjaValuta(), t4.getDatumTransakcije(), t4.getIzvnornaValuta()));
+//			t5.setKonvertovaniIznos(zamenaKursaHistorical(t5.getPocetniIznos(), "GET", "historical",
+//					t5.getKrajnjaValuta(), t5.getDatumTransakcije(), t5.getIzvnornaValuta()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Doslo je do greske sa komunikacion API servisa!");
 		}
 
-		Transakcija[] transakcije = { t1, t2, t3 };
+		Transakcija[] transakcije = { t1, t2, t3};
 
 		try (FileWriter file = new FileWriter("ostale_transakcije.json")) {
 			gson.toJson(transakcije, file);
