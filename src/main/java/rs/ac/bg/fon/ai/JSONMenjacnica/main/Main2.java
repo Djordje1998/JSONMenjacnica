@@ -61,7 +61,8 @@ public class Main2 {
 		Transakcija t1 = new Transakcija(SOURCE, CURRENCIES1, VALUE, -1, DATUMKURSA);
 		Transakcija t2 = new Transakcija(SOURCE, CURRENCIES2, VALUE, -1, DATUMKURSA);
 		Transakcija t3 = new Transakcija(SOURCE, CURRENCIES3, VALUE, -1, DATUMKURSA);
-
+		
+//      Potrebna placena verzija za rad.
 //		Transakcija t4 = new Transakcija("BTC", "USD", 1, -1, DATUMKURSA);
 //		Transakcija t5 = new Transakcija("BTC", "USD", 1, -1, SADA);
 
@@ -72,7 +73,8 @@ public class Main2 {
 					t2.getKrajnjaValuta(), t2.getDatumTransakcije(), t2.getIzvnornaValuta()));
 			t3.setKonvertovaniIznos(zamenaKursaHistorical(t3.getPocetniIznos(), "GET", "historical",
 					t3.getKrajnjaValuta(), t3.getDatumTransakcije(), t3.getIzvnornaValuta()));
-
+			
+//      Potrebna placena verzija za rad.
 //			t4.setKonvertovaniIznos(zamenaKursaHistorical(t4.getPocetniIznos(), "GET", "historical",
 //					t4.getKrajnjaValuta(), t4.getDatumTransakcije(), t4.getIzvnornaValuta()));
 //			t5.setKonvertovaniIznos(zamenaKursaHistorical(t5.getPocetniIznos(), "GET", "historical",
