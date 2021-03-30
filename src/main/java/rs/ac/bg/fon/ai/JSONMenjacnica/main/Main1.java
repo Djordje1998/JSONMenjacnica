@@ -1,25 +1,21 @@
 package rs.ac.bg.fon.ai.JSONMenjacnica.main;
 
 import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
 
 import rs.ac.bg.fon.ai.JSONMenjacnica.transakcija.Transakcija;
 
 public class Main1 {
 
-	// http://api.currencylayer.com/live?access_key=2e4baadf5c5ae6ba436f53ae5558107f&source=USD&currencies=EUR
 	private static final String BASE_URL = "http://api.currencylayer.com";
 	private static final String API_KEY = "2e4baadf5c5ae6ba436f53ae5558107f";
 	private static final String SOURCE = "USD";
@@ -27,7 +23,7 @@ public class Main1 {
 	private static final int VALUE = 411;
 	private static final SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
-	private static Gson gson= new Gson();
+	private static Gson gson= new GsonBuilder().setPrettyPrinting().create();
 
 	private static double zamenaKursa(double pocetniIznos,String method,String endpoint) throws Exception {
 		double konvertovano=-1;
@@ -62,10 +58,17 @@ public class Main1 {
 			t1.setKonvertovaniIznos(zamenaKursa(t1.getPocetniIznos(),"GET","live"));
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Doslo je do greske");
+			System.out.println("Doslo je do greske sa komunikacion API servisa!");
 		}
 		
 		System.out.println(t1);
+		
+		try (FileWriter file = new FileWriter("prva_transakcija.json")){
+			gson.toJson(t1, file);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Doslo je do greske pisanja Json fajla!");
+		}
 		
 	}
 
